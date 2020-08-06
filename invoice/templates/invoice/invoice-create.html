@@ -1,0 +1,176 @@
+{% extends "invoice/base.html" %}{% load bulma_tags %}
+{% block content %}
+<br>
+<section class="hero is-fullheight">
+    <div class="container">
+        <div class="card white-ter">
+            <div class="hero-body">
+                <form class="" method="POST" action="">{% csrf_token %}
+                    <div class="columns is-centered">
+                        <div class="column is-one-third">
+                            {{form.customer|bulma}}
+                        </div>
+
+                        <div class="column is-one-third">
+                            {{form.customer_email|bulma}}
+                        </div>
+                        <div class="column is-one-third">
+                            {{form.message|bulma}}
+                        </div>
+                    </div>
+                    <div class="columns is-centered">
+                        <div class="column is-one-third">
+                            {{form.billing_address|bulma}}
+                        </div>
+                        <div class="column is-one-third">
+                            date: <input class="input" type="date" name="date">
+                        </div>
+                        <div class="column is-one-third">
+                            due-date: <input class="input" type="date" name="due_date">
+                        </div>
+                    </div>
+
+
+                    <table class="table is-fullwidth is-bordered is-hoverable is-striped">
+                        <tbody>
+                            <thead>
+                                <tr>
+                                    <th>Product/Service</th>
+                                    <th>Description</th>
+                                    <th>QTY</th>
+                                    <th>RATE</th>
+                                    <th>AMOUNT$</th>
+                                    <th>ADD</th>
+                                </tr>
+                                {{ formset.management_form }}
+                                {% for form in formset %}
+                                <tr>
+                                    <td>{{form.service}}</td>
+                                    <td>{{form.description}}</td>
+                                    <td>{{form.quantity}}</td>
+                                    <td>{{form.rate}}</td>
+                                    <td class="amount"></td>
+                                    <td>
+                                        <div class="input-group-append">
+                                            <button
+                                                class="button is-small btn btn-success add-form-row">+</button>&nbsp;
+                                            <!-- <button class="button is-small btn btn-warning remove-form-row">-</button> -->
+                                        </div>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </thead>
+                        </tbody>
+
+                    </table>
+                    <div class="row spacer">
+                        <div class="col-4 offset-2">
+                            <button type="submit" class="button btn btn-block is-info is-half">Create</button>
+                        </div>
+                    </div>
+                    <br>
+                    <div class="columns">
+                        <div class="column">
+                            <h3 class="title is-4">Total($): <span id="total"></span></h3>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</section>
+
+
+
+{% endblock %}
+
+{% block custom_js %}
+<script type="text/javascript">
+    $('table input').on("input", function () {
+        var total = []
+        var $tr = $(this).closest('tr');
+        var textValue1 = $("input.rate", $tr).val();
+        var textValue2 = $('input.quantity', $tr).val();
+        amt = textValue1 * textValue2;
+        // console.log(amt);
+        $('.amount', $tr).html(amt);
+        calc_total();
+    });
+
+    function calc_total() {
+        var sum = 0;
+        $(".amount").each(function () {
+            sum += parseFloat($(this).text());
+        });
+        console.log(sum);
+        $('#total').text(sum);
+    }
+</script>
+
+
+<script type="text/javascript">
+    function updateElementIndex(el, prefix, ndx) {
+        var id_regex = new RegExp('(' + prefix + '-\\d+)');
+        var replacement = prefix + '-' + ndx;
+        if ($(el).attr("for")) $(el).attr("for", $(el).attr("for").replace(id_regex, replacement));
+        if (el.id) el.id = el.id.replace(id_regex, replacement);
+        if (el.name) el.name = el.name.replace(id_regex, replacement);
+    }
+    function cloneMore(selector, prefix) {
+        var newElement = $(selector).clone(true);
+        console.log(newElement);
+        var total = $('#id_' + prefix + '-TOTAL_FORMS').val();
+        newElement.find(':input:not([type=button]):not([type=submit]):not([type=reset])').each(function () {
+            var name = $(this).attr('name')
+            if (name) {
+                name = name.replace('-' + (total - 1) + '-', '-' + total + '-');
+                var id = 'id_' + name;
+                $(this).attr({ 'name': name, 'id': id }).val('').removeAttr('checked');
+            }
+        });
+        newElement.find('label').each(function () {
+            var forValue = $(this).attr('for');
+            if (forValue) {
+                forValue = forValue.replace('-' + (total - 1) + '-', '-' + total + '-');
+                $(this).attr({ 'for': forValue });
+            }
+        });
+        total++;
+        $('#id_' + prefix + '-TOTAL_FORMS').val(total);
+        $(selector).after(newElement);
+        // $("div.form-row.button.is-primary").not(":last").hide();
+        // var conditionRow = $('.form-row:not(:last)');
+        // conditionRow.find('.button.is-primary')
+        // .hide();
+        // .removeClass('btn-success').addClass('btn-danger')
+        // .removeClass('add-form-row').addClass('remove-form-row')
+        // .html('-');
+        return false;
+    }
+    function deleteForm(prefix, btn) {
+        var total = parseInt($('#id_' + prefix + '-TOTAL_FORMS').val());
+        if (total > 1) {
+            btn.closest('.form-row').remove();
+            var forms = $('.form-row');
+            $('#id_' + prefix + '-TOTAL_FORMS').val(forms.length);
+            for (var i = 0, formCount = forms.length; i < formCount; i++) {
+                $(forms.get(i)).find(':input').each(function () {
+                    updateElementIndex(this, prefix, i);
+                });
+            }
+        }
+        return false;
+    }
+    $(document).on('click', '.add-form-row', function (e) {
+        e.preventDefault();
+        cloneMore('table tr:last', 'form');
+        return false;
+    });
+    $(document).on('click', '.remove-form-row', function (e) {
+        e.preventDefault();
+        deleteForm('form', $(this));
+        return false;
+    });
+
+</script>
+{% endblock %}
