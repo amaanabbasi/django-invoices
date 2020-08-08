@@ -11,7 +11,7 @@ For new features do raise an issue.
 ## Usage
 1) python manage.py migrate
 2) python manage.py runserver 
-3) Go to http:localhost:8000
+3) Go to http://localhost:8000
 
 ### Screenshots
 ![Screenshot from 2020-08-06 23-01-34](https://user-images.githubusercontent.com/30196830/89564641-ee8ad480-d83a-11ea-85b1-5d872b05a0ac.png)
