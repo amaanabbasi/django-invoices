@@ -18,3 +18,5 @@ For new features do raise an issue.
 ![Screenshot from 2020-08-06 23-21-32](https://user-images.githubusercontent.com/30196830/89565367-162e6c80-d83c-11ea-8b5d-ed247e427dd2.png)
 ![Screenshot from 2020-08-06 23-23-06](https://user-images.githubusercontent.com/30196830/89565233-e7b09180-d83b-11ea-9cfd-48e537023ae6.png)
 
+### Promo Video 
+[Youtube](https://youtu.be/JtR0sOa4t_k)
