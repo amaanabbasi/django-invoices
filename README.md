@@ -4,6 +4,7 @@ Create invoices using django
 ## Pre-requisites (linux)
 * wkhtmltopdf 0.12.6 (with patched qt)
 * sudo apt install wkhtmltopdf
+* Using Docker `sudo docker-compose up`
 
 ## Contribution
 For new features do raise an issue.
