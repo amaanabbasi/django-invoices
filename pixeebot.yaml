@@ -1,0 +1,4 @@
+ai:
+  allow_llm_access: true
+
+assignees: [mary, luis]
